@@ -2,7 +2,7 @@ const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const consoleTable = require('console.table');
 
-
+//connect to database
 const db = mysql.createConnection(
     {
         host: 'localhost',
@@ -53,6 +53,7 @@ const openPrompt = () => {
             updateRole();
             break;
           case "Exit":
+            console.log("See ya");
             db.end();
             break;
            
