@@ -4,7 +4,7 @@ VALUES ('Auto'),
     ('Liability'),
     ('Underwriting');
 
-INSERT INTO role (title, department_id, salary)
+INSERT INTO roles (title, department_id, salary)
 VALUES ('Claims Manager', 1, 105000),
     ('Claims Adjuster', 1, 65000),
     ('Unit Manager', 2, 145000),

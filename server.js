@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-const cTable = require('console.table');
+const consoleTable = require('console.table');
 
 
 const db = mysql.createConnection(
@@ -64,7 +64,18 @@ const openPrompt = () => {
   
 
 
-const deptView = () => {}
+const deptView = () =>  db.query('SELECT * FROM department', (err, results) => {
+  if (err) {
+      console.log(err)
+  } else {
+      console.table('\x1b[33m', results)
+  }
+  openPrompt();
+
+});
+
+
+
 const roleView = () => {}
 const empView = () => {}
 const deptAdd = () => {}
