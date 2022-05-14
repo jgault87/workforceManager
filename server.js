@@ -63,6 +63,7 @@ const openPrompt = () => {
   }
   
 
+  //function to view all departments
 
 const deptView = () =>  db.query('SELECT * FROM department', (err, results) => {
   if (err) {
@@ -75,9 +76,33 @@ const deptView = () =>  db.query('SELECT * FROM department', (err, results) => {
 });
 
 
+//function to view all roles
 
-const roleView = () => {}
-const empView = () => {}
+const roleView = () =>  db.query('SELECT * FROM roles', (err, results) => {
+  if (err) {
+      console.log(err)
+  } else {
+      console.table('\x1b[33m', results)
+  }
+  openPrompt();
+
+});
+
+//function to view all employees
+const empView = () =>  db.query('SELECT * FROM employee', (err, results) => {
+  if (err) {
+      console.log(err)
+  } else {
+      console.table('\x1b[33m', results)
+  }
+  openPrompt();
+
+});
+
+
+
+
+
 const deptAdd = () => {}
 const roleAdd = () => {}
 const updateRole = () => {}
