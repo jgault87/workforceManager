@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
+const cTable = require('console.table');
 
 
 const db = mysql.createConnection(
@@ -30,7 +31,7 @@ const openPrompt = () => {
           ],
         },
       ])
-      //switch case for userselection, if user chooses not to add further it will handoff to generateHTML function
+      //switch case for userselection
       .then(function (data) {
         switch (data.option) {
           case "View All Departments":
@@ -51,9 +52,12 @@ const openPrompt = () => {
           case "Update an Employee Role":
             updateRole();
             break;
-  
+          case "Exit":
+            db.end();
+            break;
+           
           default:
-            exit();
+            console.log('something wrong with code')
         }
       });
   }
