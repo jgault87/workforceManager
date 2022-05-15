@@ -2,6 +2,9 @@ const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const consoleTable = require("console.table");
 
+
+
+
 //connect to database
 const db = mysql.createConnection(
   {
@@ -12,6 +15,7 @@ const db = mysql.createConnection(
   },
   console.log("Connected to employee database")
 );
+
 
 const openPrompt = () => {
   inquirer
@@ -123,12 +127,92 @@ const deptAdd = () => {
   })
 };
 
-const roleAdd = () => {};
+//write function to update role params
+// const roleAdd = () => 
+// {
+//   inquirer.prompt([
+//     {
+//       type: "input",
+//       message: "What type of role would you like to add?",
+//       name: "newRole",
+//     },
+//     {
+//       type: "input",
+//       message: "What is the salary for this role?",
+//       name: "roleSalary"
+//     },
+//     {
+//       type: "list",
+//       message: "What department does this role report to?",
+//       choices: deptArr,    
+//       name: "roleDepartment"
+//     }
+    
+//   ])
+//   .then((res) => {
+
+    
+//     db.query('INSERT INTO departments (department_name) VALUES (?)', res.newDepartment, (err, results) => {
+//       if (err) {
+//         console.log(err);
+//       } else {
+//         console.log(`New Department ${res.newDepartment} has been added successfully`);
+//       }
+//       openPrompt();
+//     })
+//   })
+// };
+
+
 const empAdd = () => {};
 const updateRole = () => {};
 
+
+//initialize function to open prompt and generate arrays from db for further prompts
 function init() {
   openPrompt();
+  generateDepartmentsArr();
+  generateRoleArr();
+  generateEmpArr();
 }
 
 init();
+
+
+
+
+const deptArr = [];
+const roleArr = [];
+const empArr = [];
+
+//populate dept array 
+const generateDepartmentsArr = () => { db.query(`SELECT * FROM departments`, (err, results) => {
+  if (err) {
+      console.error(err);
+  }        
+  for (let department of results) {
+      deptArr.push(department.department_name);
+  }
+})
+};
+
+generateRoleArr = () => { db.query(`SELECT * FROM roles`, (err, results) => {
+  if (err) {
+      console.error(err);
+  }        
+  for (let role of results) {
+      roleArr.push(role.title);
+  }
+})
+};
+
+
+generateEmpArr = () => { db.query(`SELECT * FROM employees`, (err, results) => {
+  if (err) {
+      console.error(err);
+  }        
+  for (let employee of results) {
+      empArr.push(`${employee.first_name} ${employee.last_name}`);
+  }
+})
+};
