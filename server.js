@@ -66,7 +66,7 @@ const openPrompt = () => {
 //function to view all departments
 
 const deptView = () =>
-  db.query("SELECT * FROM department", (err, results) => {
+  db.query("SELECT * FROM departments", (err, results) => {
     if (err) {
       console.log(err);
     } else {
@@ -89,7 +89,7 @@ const roleView = () =>
 
 //function to view all employees
 const empView = () =>
-  db.query("SELECT * FROM employee", (err, results) => {
+  db.query("SELECT * FROM employees", (err, results) => {
     if (err) {
       console.log(err);
     } else {
@@ -98,17 +98,27 @@ const empView = () =>
     openPrompt();
   });
 
-async function deptAdd(req, res) {
-  const newDepartment = await req.inquirer.prompt([
+
+//function to add department
+const deptAdd= () => {
+  inquirer.prompt([
     {
       type: "input",
       message: "Enter the name of the department you would like to add",
       name: "newDepartment",
     },
-  ]);
-
-
-}
+  ])
+  .then((res) => {
+    db.query('INSERT INTO departments (department_name) VALUES (?)', res.newDepartment, (err, results) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(`New Department ${res.newDepartment} has been added successfully`);
+      }
+      openPrompt();
+    })
+  })
+};
 
 const roleAdd = () => {};
 const updateRole = () => {};
