@@ -49,6 +49,9 @@ const openPrompt = () => {
         case "Add a Role":
           roleAdd();
           break;
+          case "Add an Employee":
+          empAdd();
+          break;
         case "Update an Employee Role":
           updateRole();
           break;
@@ -100,7 +103,7 @@ const empView = () =>
 
 
 //function to add department
-const deptAdd= () => {
+const deptAdd = () => {
   inquirer.prompt([
     {
       type: "input",
@@ -121,6 +124,7 @@ const deptAdd= () => {
 };
 
 const roleAdd = () => {};
+const empAdd = () => {};
 const updateRole = () => {};
 
 function init() {
