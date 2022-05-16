@@ -73,7 +73,7 @@ const openPrompt = () => {
 //function to view all departments
 
 const deptView = () =>
-  db.query("SELECT * FROM departments", (err, results) => {
+  db.query("SELECT department_name AS Departments FROM departments", (err, results) => {
     if (err) {
       console.log(err);
     } else {
@@ -85,7 +85,12 @@ const deptView = () =>
 //function to view all roles
 
 const roleView = () =>
-  db.query("SELECT * FROM roles", (err, results) => {
+  db.query(`SELECT roles.id AS id, 
+    department_name AS department,
+    roles.salary AS salary FROM roles
+    JOIN departments ON roles.department_id = departments.id
+   `,
+  (err, results) => {
     if (err) {
       console.log(err);
     } else {
@@ -96,7 +101,18 @@ const roleView = () =>
 
 //function to view all employees
 const empView = () =>
-  db.query("SELECT * FROM employees", (err, results) => {
+  db.query(`SELECT employees.id AS id,
+  employees.first_name AS first_name,
+  employees.last_name AS last_name,
+  roles.title AS title,
+  departments.department_name AS department,
+  roles.salary AS salary,
+  concat(manager.first_name, " " , manager.last_name) AS manager
+  FROM employees
+  JOIN roles ON employees.role_id = roles.id
+  JOIN departments ON roles.department_id = departments.id
+  LEFT JOIN employees manager ON employees.manager_id = manager.id`
+  , (err, results) => {
     if (err) {
       console.log(err);
     } else {
@@ -127,41 +143,41 @@ const deptAdd = () => {
   })
 };
 
-//write function to update role params
-// const roleAdd = () => 
-// {
-//   inquirer.prompt([
-//     {
-//       type: "input",
-//       message: "What type of role would you like to add?",
-//       name: "newRole",
-//     },
-//     {
-//       type: "input",
-//       message: "What is the salary for this role?",
-//       name: "roleSalary"
-//     },
-//     {
-//       type: "list",
-//       message: "What department does this role report to?",
-//       choices: deptArr,    
-//       name: "roleDepartment"
-//     }
+
+const roleAdd = () => 
+{
+  inquirer.prompt([
+    {
+      type: "input",
+      message: "What type of role would you like to add?",
+      name: "newRole",
+    },
+    {
+      type: "input",
+      message: "What is the salary for this role?",
+      name: "roleSalary"
+    },
+    {
+      type: "list",
+      message: "What department does this role report to?",
+      choices: deptArr,    
+      name: "roleDepartment"
+    }
     
-//   ])
-//   .then((res) => {
+  ])
+  .then((res) => {
 
     
-//     db.query('INSERT INTO departments (department_name) VALUES (?)', res.newDepartment, (err, results) => {
-//       if (err) {
-//         console.log(err);
-//       } else {
-//         console.log(`New Department ${res.newDepartment} has been added successfully`);
-//       }
-//       openPrompt();
-//     })
-//   })
-// };
+    db.query('INSERT INTO departments (department_name) VALUES (?)', res.newDepartment, (err, results) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(`New Department ${res.newDepartment} has been added successfully`);
+      }
+      openPrompt();
+    })
+  })
+};
 
 
 const empAdd = () => {};
@@ -171,9 +187,9 @@ const updateRole = () => {};
 //initialize function to open prompt and generate arrays from db for further prompts
 function init() {
   openPrompt();
-  generateDepartmentsArr();
-  generateRoleArr();
-  generateEmpArr();
+  // generateDepartmentsArr();
+  // generateRoleArr();
+  // generateEmpArr();
 }
 
 init();
@@ -181,9 +197,9 @@ init();
 
 
 
-const deptArr = [];
-const roleArr = [];
-const empArr = [];
+let deptArr = [];
+let roleArr = [];
+let empArr = [];
 
 //populate dept array 
 const generateDepartmentsArr = () => { db.query(`SELECT * FROM departments`, (err, results) => {
