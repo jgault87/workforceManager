@@ -18,6 +18,7 @@ const db = mysql.createConnection(
 
 
 const openPrompt = () => {
+  generateArrs();
   inquirer
     .prompt([
       {
@@ -77,7 +78,7 @@ const deptView = () =>
     if (err) {
       console.log(err);
     } else {
-      console.table("\x1b[33m", results);
+      console.table("\x1b[36m", results);
     }
     openPrompt();
   });
@@ -86,6 +87,7 @@ const deptView = () =>
 
 const roleView = () =>
   db.query(`SELECT roles.id AS id, 
+    roles.title AS title,
     department_name AS department,
     roles.salary AS salary FROM roles
     JOIN departments ON roles.department_id = departments.id
@@ -94,7 +96,7 @@ const roleView = () =>
     if (err) {
       console.log(err);
     } else {
-      console.table("\x1b[33m", results);
+      console.table("\x1b[36m", results);
     }
     openPrompt();
   });
@@ -116,7 +118,7 @@ const empView = () =>
     if (err) {
       console.log(err);
     } else {
-      console.table("\x1b[33m", results);
+      console.table("\x1b[36m", results);
     }
     openPrompt();
   });
@@ -144,39 +146,46 @@ const deptAdd = () => {
 };
 
 
-const roleAdd = () => 
-{
-  inquirer.prompt([
-    {
-      type: "input",
-      message: "What type of role would you like to add?",
-      name: "newRole",
-    },
-    {
-      type: "input",
-      message: "What is the salary for this role?",
-      name: "roleSalary"
-    },
-    {
-      type: "list",
-      message: "What department does this role report to?",
-      choices: deptArr,    
-      name: "roleDepartment"
-    }
-    
-  ])
-  .then((res) => {
+const roleAdd = () => {
+  inquirer
+      .prompt([
+          {
+              type: 'input',
+              name: 'role',
+              message: 'What is the name of the role?'
+          },
+          {
+              type: 'input',
+              name:'salary',
+              message: 'What is the salary of the role?'
+          },
+          {
+              type: 'list',
+              name: 'dept',
+              message: 'Which department does the role belong to?',
+              choices: deptArr
+          }
+      ])
+      .then((res) => {
+          let deptID;
+          db.query(`SELECT (id) FROM departments WHERE department_name=(?)`, res.dept, (err, results) => {
+              if (err) {
+                  console.error(err)
+              } else {
+                  deptID = results[0].id
+              }
 
-    
-    db.query('INSERT INTO departments (department_name) VALUES (?)', res.newDepartment, (err, results) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(`New Department ${res.newDepartment} has been added successfully`);
-      }
-      openPrompt();
-    })
-  })
+              db.query(`INSERT INTO roles (title, department_id, salary) VALUES (?, ?, ?)`, [res.role, deptID, res.salary], (err, results) => {
+                  if (err) {
+                      console.error(err)
+                  } else {
+                      roleArr.push(res.role);
+                      console.log(`New Role ${results} has been added successfully`);
+                  }
+                  openPrompt();
+              })
+          })
+      })
 };
 
 
@@ -187,13 +196,11 @@ const updateRole = () => {};
 //initialize function to open prompt and generate arrays from db for further prompts
 function init() {
   openPrompt();
-  // generateDepartmentsArr();
-  // generateRoleArr();
-  // generateEmpArr();
+  
+ 
 }
 
 init();
-
 
 
 
@@ -201,15 +208,44 @@ let deptArr = [];
 let roleArr = [];
 let empArr = [];
 
-//populate dept array 
-const generateDepartmentsArr = () => { db.query(`SELECT * FROM departments`, (err, results) => {
+
+//populate arrays to display/call updated information in inquirer
+function generateArrs() { 
+
+
+db.query(`SELECT * FROM departments`, (err, results) => {
+    if (err) {
+        console.error(err)
+    }        
+    for (let departments of results) {
+        deptArr.push(`${departments.department_name}`);
+    }
+    // console.log(deptArr);
+ });
+
+ db.query(`SELECT * FROM employees`, (err, results) => {
   if (err) {
-      console.error(err);
-  }        
-  for (let department of results) {
-      deptArr.push(department.department_name);
+      console.error(err)
   }
-})
+  for (let employees of results) {
+      empArr.push(`${employees.first_name} ${employees.last_name}`)
+  }
+  // console.log(empArr);
+}); 
+
+db.query(`SELECT * FROM roles`, (err, results) => {
+  if (err) {
+      console.error(err)
+  }
+  for (let roles of results) {
+      roleArr.push(`${roles.title}`)
+  }
+  // console.log(roleArr);
+}); 
+
+
+
+
 };
 
 generateRoleArr = () => { db.query(`SELECT * FROM roles`, (err, results) => {
