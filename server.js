@@ -196,7 +196,7 @@ const roleAdd = () => {
                 console.error(err);
               } else {
                 roleArr.push(res.role);
-                console.log(`New Role ${results} has been added successfully`);
+                console.log(`New Role ${res.role} has been added successfully`);
               }
               openPrompt();
             }
@@ -294,10 +294,10 @@ function init() {
 
 init();
 
-let deptArr = [];
-let roleArr = [];
-let empArr = [];
-let managerArr = [];
+const deptArr = [];
+const roleArr = [];
+const empArr = [];
+const managerArr = [];
 
 //populate arrays to display/call updated information in inquirer
 function generateArrs() {
