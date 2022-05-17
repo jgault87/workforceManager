@@ -155,6 +155,7 @@ const deptAdd = () => {
     });
 };
 
+//add role function
 const roleAdd = () => {
   inquirer
     .prompt([
@@ -205,80 +206,84 @@ const roleAdd = () => {
     });
 };
 
-const empAdd = () => {
 
+// add employee function
+const empAdd = () => {
   inquirer
-  .prompt([
+    .prompt([
       {
-          type: 'input',
-          name: 'first',
-          message: 'What is the employees first name?'
+        type: "input",
+        name: "first",
+        message: "What is the employees first name?",
       },
       {
-          type: 'input',
-          name: 'last',
-          message: 'What is the employees last name?'
+        type: "input",
+        name: "last",
+        message: "What is the employees last name?",
       },
       {
-          type: 'list',
-          name: 'role',
-          message: 'What is the employees role?',
-          choices: roleArr
+        type: "list",
+        name: "role",
+        message: "What is the employees role?",
+        choices: roleArr,
       },
       {
-          type: 'list',
-          name: 'manager',
-          message: 'Who is the employees manager?',
-          choices: managerArr
-      }
-  ])
-  .then((res) => {
+        type: "list",
+        name: "manager",
+        message: "Who is the employees manager?",
+        choices: managerArr,
+      },
+    ])
+    .then((res) => {
       let roleID;
       const managerIdArr = res.manager.split(" ");
       let managerID;
 
-      db.query(`SELECT (id) FROM roles WHERE title=(?)`, res.role, (err, results) => {
+      db.query(
+        `SELECT (id) FROM roles WHERE title=(?)`,
+        res.role,
+        (err, results) => {
           if (err) {
-              console.error(err)
+            console.error(err);
           } else {
-              roleID = results[0].id
+            roleID = results[0].id;
           }
 
-          db.query(`SELECT (id) FROM employees WHERE first_name=(?) AND last_name=(?)`, [managerIdArr[1], managerIdArr[2]], (err, results) => {
+          db.query(
+            `SELECT (id) FROM employees WHERE first_name=(?) AND last_name=(?)`,
+            [managerIdArr[1], managerIdArr[2]],
+            (err, results) => {
               if (err) {
-                  console.error(err)
+                console.error(err);
               } else {
-                  managerID = results[0].id
-                  insertEmp();
+                managerID = results[0].id;
+                insertEmp();
               }
-          })
-          
+            }
+          );
+
           const insertEmp = () => {
-              const params = [res.first, res.last, roleID, managerID]
-              db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, params, (err, results) => {
-                  if (err) {
-                      console.error(err)
-                  }  else {
-                      empArr.push(`${res.first} ${res.last}`);
-                      console.log(`\x1b[36m Employee ${res.first} ${res.last} successfully added!`);
-                  }
-                  openPrompt();
-              })
-          }
-      })
-  })
+            const params = [res.first, res.last, roleID, managerID];
+            db.query(
+              `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`,
+              params,
+              (err, results) => {
+                if (err) {
+                  console.error(err);
+                } else {
+                  empArr.push(`${res.first} ${res.last}`);
+                  console.log(
+                    `\x1b[36m Employee ${res.first} ${res.last} successfully added!`
+                  );
+                }
+                openPrompt();
+              }
+            );
+          };
+        }
+      );
+    });
 };
-
-
-
-
-
-
-
-
-
-
-
 
 const updateRole = () => {};
 
@@ -341,12 +346,12 @@ function generateArrs() {
       console.error(err);
     }
     for (let manager of results) {
-      if (manager.manager_id !== null){
-      managerArr.push(`${manager.manager_id} ${manager.first_name} ${manager.last_name}`);
+      if (manager.manager_id !== null) {
+        managerArr.push(
+          `${manager.manager_id} ${manager.first_name} ${manager.last_name}`
+        );
       }
     }
-    console.log(managerArr);
+    // console.log(managerArr);
   });
-
-
 }
