@@ -2,7 +2,7 @@
   
   [![license](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
- 
+ ![screenshot](screen.jpg)
   
   ## Technologies
   ![](https://img.shields.io/badge/javaScript-brightgreen.svg)
